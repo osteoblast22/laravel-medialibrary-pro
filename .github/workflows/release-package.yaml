@@ -7,13 +7,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix: {dir: ['media-library-pro-core','media-library-pro-react','media-library-pro-react-attachment','media-library-pro-react-collection','media-library-pro-styles','media-library-pro-vue2','media-library-pro-vue2-attachment','media-library-pro-vue2-collection','media-library-pro-vue3','media-library-pro-vue3-attachment','media-library-pro-vue3-collection']}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 16
       - run: npm ci
+        working-directory: ${{ matrix.dir }}
       - run: npm test
+        working-directory: ${{ matrix.dir }}
 
   publish-gpr:
     needs: build
@@ -21,6 +25,8 @@ jobs:
     permissions:
       packages: write
       contents: read
+    strategy:
+        matrix: {dir: ['media-library-pro-core','media-library-pro-react','media-library-pro-react-attachment','media-library-pro-react-collection','media-library-pro-styles','media-library-pro-vue2','media-library-pro-vue2-attachment','media-library-pro-vue2-collection','media-library-pro-vue3','media-library-pro-vue3-attachment','media-library-pro-vue3-collection']}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,6 +34,8 @@ jobs:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
       - run: npm ci
+        working-directory: ${{ matrix.dir }}
       - run: npm publish
+        working-directory: ${{ matrix.dir }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
